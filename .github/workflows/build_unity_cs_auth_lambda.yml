@@ -1,5 +1,7 @@
 name: Build and ZIP Unity CS Lambda Authorizer Workflow
-on: [push, workflow_dispatch]
+on:
+  release:
+    types: [created]
 jobs:
   build_source:
     name: build and zip lambda
@@ -22,23 +24,17 @@ jobs:
       - name: Create ZIP file
         run: zip -r ./unity-cs-lambda-auth.zip node_modules package.json index.js
         working-directory: ./
-#       - name: Commit and push
-#         uses: EndBug/add-and-commit@v7
-#         with:
-#           add: '["./unity-cs-lambda-auth.zip"]'
-#           message: 'Add unity-cs-lambda-auth.zip'
-#           push: true
-#       - name: Get release
-#         id: get_release
-#         uses: bruceadams/get-release@v1.3.2
-#         env:
-#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get release
+        id: get_release
+        uses: bruceadams/get-release@v1.3.2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload release binary
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: "https://uploads.github.com/repos/unity-sds/unity-cs-auth-lambda/releases/107445246/assets{?name,label}"
+          upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: ./unity-cs-lambda-auth.zip
           asset_name: unity-cs-lambda-auth-${{ steps.latest_release_info.outputs.tag_name }}.zip
           asset_content_type: application/zip
