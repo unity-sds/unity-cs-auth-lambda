@@ -20,12 +20,12 @@ jobs:
         run: |
           npm install
       - name: Create ZIP file
-        run: zip -r ./dist/unity-cs-lambda-auth.zip node_modules package.json index.js
+        run: zip -r ./unity-cs-lambda-auth.zip node_modules package.json index.js
         working-directory: ./
 #       - name: Commit and push
 #         uses: EndBug/add-and-commit@v7
 #         with:
-#           add: '["./dist/unity-cs-lambda-auth.zip"]'
+#           add: '["./unity-cs-lambda-auth.zip"]'
 #           message: 'Add unity-cs-lambda-auth.zip'
 #           push: true
       - name: Gets latest created release info
