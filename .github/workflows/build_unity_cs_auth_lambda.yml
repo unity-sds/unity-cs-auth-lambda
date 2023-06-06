@@ -28,17 +28,17 @@ jobs:
 #           add: '["./unity-cs-lambda-auth.zip"]'
 #           message: 'Add unity-cs-lambda-auth.zip'
 #           push: true
-      - name: Get release
-        id: v1.0.1
-        uses: bruceadams/get-release@v1.3.2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#       - name: Get release
+#         id: get_release
+#         uses: bruceadams/get-release@v1.3.2
+#         env:
+#           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Upload release binary
         uses: actions/upload-release-asset@v1.0.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.get_release.outputs.upload_url }}
+          upload_url: "https://uploads.github.com/repos/unity-sds/unity-cs-auth-lambda/releases/107445246/assets{?name,label}"
           asset_path: ./unity-cs-lambda-auth.zip
           asset_name: unity-cs-lambda-auth-${{ steps.latest_release_info.outputs.tag_name }}.zip
           asset_content_type: application/zip
