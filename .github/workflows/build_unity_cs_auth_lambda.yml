@@ -20,11 +20,22 @@ jobs:
         run: |
           npm install
       - name: Create ZIP file
-        run: zip -r unity-cs-lambda-auth.zip node_modules package.json index.js
+        run: zip -r ./dist/unity-cs-lambda-auth.zip node_modules package.json index.js
         working-directory: ./
-      - name: Commit and push
-        uses: EndBug/add-and-commit@v7
+#       - name: Commit and push
+#         uses: EndBug/add-and-commit@v7
+#         with:
+#           add: '["./dist/unity-cs-lambda-auth.zip"]'
+#           message: 'Add unity-cs-lambda-auth.zip'
+#           push: true
+      - name: Gets latest created release info
+        id: latest_release_info
+        uses: jossef/action-latest-release-info@v1.2.2
+      - name: Upload asset to github release page
+        id: upload-release-asset
+        uses: actions/upload-release-asset@v1
         with:
-          add: '["./unity-cs-lambda-auth.zip"]'
-          message: 'Add unity-cs-lambda-auth.zip'
-          push: true
+          upload_url: ${{ steps.latest_release_info.outputs.upload_url }}
+          asset_path: ./dist/unity-cs-lambda-auth.zip
+          asset_name: unity-cs-lambda-auth-${{ steps.latest_release_info.outputs.tag_name }}.zip
+          asset_content_type: application/zip
