@@ -29,7 +29,7 @@ jobs:
 #           message: 'Add unity-cs-lambda-auth.zip'
 #           push: true
       - name: Get release
-        id: latest
+        id: v1.0.1
         uses: bruceadams/get-release@v1.3.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
