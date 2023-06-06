@@ -36,5 +36,5 @@ jobs:
         with:
           upload_url: ${{ steps.get_release.outputs.upload_url }}
           asset_path: ./unity-cs-lambda-auth.zip
-          asset_name: unity-cs-lambda-auth-${{ steps.latest_release_info.outputs.tag_name }}.zip
+          asset_name: unity-cs-lambda-auth-${{ steps.get_release.outputs.tag_name }}.zip
           asset_content_type: application/zip
