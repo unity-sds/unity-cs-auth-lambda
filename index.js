@@ -68,15 +68,19 @@ exports.handler =  async(event, _context, callback) => {
     console.log(decoded);
 
     let groups = decoded['cognito:groups'];
-    console.log(groups);
+    console.log("List of Cognito user groups in the access token: " + groups);
 
-    if (groups.includes("Unity_Viewer") || groups.includes("Unity_Admin")) {
-        console.log("VALID TOKEN, ALLOW!!")
-        callback(null, generatePolicy('user', 'Allow', event.methodArn));
-    } else {
-        callback("Unauthorized");
+    let cognitoGroupsAllowed = process.env.COGNITO_GROUPS_ALLOWED.split(',').map(item=>item.trim());
+
+    for (const cognitoGroup of cognitoGroupsAllowed) {
+        if (groups.includes(cognitoGroup)) {
+            console.log("VALID TOKEN, ALLOW!!")
+            callback(null, generatePolicy('user', 'Allow', event.methodArn));
+        }
     }
 
+    // Call back with Unauthorized if the access token does not have any of the allowed Cognito groups
+    callback("Unauthorized");
 };
 
 
