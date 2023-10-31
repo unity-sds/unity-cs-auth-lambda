@@ -40,9 +40,10 @@ zip -r ucs-common-lambda-auth.zip .
 
 7. After deploying the lambda function, go to the lambda function in AWS Console and  click on Configuration -> Environment variables.
 
-8. Configure the following 2 environment variables (The correct values can be obtained by checking the Cognito Unity 
+8. Configure the following 3 environment variables (The correct values can be obtained by checking the Cognito Unity 
  User Pool or contacting the Unity Common Services team).
    * COGNITO_USER_POOL_ID = <COGNITO_USER_POOL_ID>
    * COGNITO_CLIENT_ID_LIST = <COMMA_SEPERATED_LIST_OF_CLIENT_IDS>
+   * COGNITO_GROUPS_ALLOWED = <COMMA_SEPERATED_LIST_OF_COGNITO_USER_GROUPS>
 
 After above steps, the lambda functions can be used in API Gateway Authorizers.
