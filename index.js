@@ -1,5 +1,5 @@
 /**
- * Token-based lambda authorizer function to allow only JWT access tokens issued for the user pool
+ * Token-based authorizer to allow only JWT access tokens issued for the user pool
  * configured as lambda environment variable COGNITO_USER_POOL_ID and the list of
  * client ids configured as lambda environment variable COGNITO_USER_POOL_ID.
  *
@@ -22,13 +22,11 @@
  */
 exports.handler =  async(event, _context, callback) => {
     let token = event.authorizationToken;
-    console.log(token);
 
     let accessToken;
 
     if (token.startsWith("Bearer")) {
         accessToken = token.split(' ')[1];
-        console.log("accessToken =" + accessToken);
     } else {
         console.log("Token not valid! Does not start with Bearer.");
         callback("Unauthorized");
@@ -41,13 +39,12 @@ exports.handler =  async(event, _context, callback) => {
     const verifier = CognitoJwtVerifier.create({
         userPoolId: process.env.COGNITO_USER_POOL_ID,
         tokenUse: "access",
-        clientId: process.env.COGNITO_CLIENT_ID_LIST.split(',').map(item=>item.trim()),
+        clientId: null, // This was set to null purposefully to allow client IDs under COGNITO_USER_POOL_ID. This can be changed later if required.
     });
 
     // Conduct verification
     try {
         const payload = await verifier.verify(accessToken);
-        console.log("Token is valid. Payload:", payload);
     } catch (error) {
         console.log("Token not valid!");
         console.log(error);
@@ -65,22 +62,15 @@ exports.handler =  async(event, _context, callback) => {
         callback("Unauthorized");
     }
 
-    console.log(decoded);
-
     let groups = decoded['cognito:groups'];
-    console.log("List of Cognito user groups in the access token: " + groups);
 
-    let cognitoGroupsAllowed = process.env.COGNITO_GROUPS_ALLOWED.split(',').map(item=>item.trim());
-
-    for (const cognitoGroup of cognitoGroupsAllowed) {
-        if (groups.includes(cognitoGroup)) {
-            console.log("VALID TOKEN, ALLOW!!")
-            callback(null, generatePolicy('user', 'Allow', event.methodArn));
-        }
+    if (groups.includes("Unity_Viewer") || groups.includes("Unity_Admin")) {
+        console.log("VALID TOKEN, ALLOW!!")
+        callback(null, generatePolicy('user', 'Allow', event.methodArn));
+    } else {
+        callback("Unauthorized");
     }
 
-    // Call back with Unauthorized if the access token does not have any of the allowed Cognito groups
-    callback("Unauthorized");
 };
 
 
@@ -103,7 +93,6 @@ function parseJwt (token) {
  */
 function decode(base64Encoded) {
     let converted = Buffer.from(base64Encoded, 'base64').toString()
-    console.log(converted);
     return converted;
 }
 
