@@ -64,6 +64,12 @@ exports.handler =  async(event, _context, callback) => {
 
     let groups = decoded['cognito:groups'];
 
+    if (groups == null || groups === 'undefined') {
+        let errorMessage = "No Cognito groups found in the access token. Please check with the Unity CS team";
+        console.error(errorMessage)
+        callback("Unauthorized");
+    };
+
     let cognitoGroupsAllowed = process.env.COGNITO_GROUPS_ALLOWED.split(',').map(item=>item.trim());
 
     for (const cognitoGroup of cognitoGroupsAllowed) {
